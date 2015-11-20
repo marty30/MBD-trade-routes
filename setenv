@@ -1,0 +1,21 @@
+export PROJECT_HOME=$PWD
+export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
+export CLASS_PREFIX=nl.utwente.bigdata
+export HADOOP_CONF_DIR=/etc/hadoop/conf
+export EXECUTORS=10
+
+function runTool() {
+        name=$1
+        shift
+        /usr/lib/spark/bin/spark-submit --class $CLASS_PREFIX.$name \
+            --master yarn-client \
+            --num-executors $EXECUTORS \
+            --driver-memory 4g \
+            --executor-memory 2g \
+            --executor-cores 1 \
+            --queue thequeue \
+            target/ctit-spark*.jar \
+            $@
+}
+
+
