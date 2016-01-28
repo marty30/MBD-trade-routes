@@ -3,7 +3,7 @@
 This template contains some settings and examples in Java and Scala.
 
 ## Setup
-To run commands in the background (/usr/lib/spark/bin/spark) or in a shell (/usr/lib/spark/bin/spark-shell), you have to call supply several parameters. The file `setenv` stores these parameters. Please ada
+To run commands in the background (/usr/lib/spark/bin/spark) or in a shell (/usr/lib/spark/bin/spark-shell), you have to call supply several parameters. The file `setenv` stores these parameters. Please adapt this file before you continue.
 
 To compile the project do the following
 ```

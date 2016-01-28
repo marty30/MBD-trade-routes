@@ -7,7 +7,7 @@ export CORES=4
 # Amount of memory per computer or executor (node)
 export EXECUTOR_MEM=4g
 # Amount of memory on the driver (the node that coordinates the job)
-export DRIVER_MEM=6g
+export DRIVER_MEM=2g
 
 # Some admin variables
 export PROJECT_HOME=$PWD
