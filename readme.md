@@ -38,7 +38,7 @@ There will be some status messages and then you arrive at a prompt where you can
 ```
 val text = sc.textFile("input")
 val map  = text.flatMap(line => line.split(" ")).map(word => (word,1))
-val reduce = map.reduce((a,b) => a + b)
+val reduce = map.reduceByKey((a,b) => a + b)
 reduce.saveAsTextFile("output")
 ```
 
