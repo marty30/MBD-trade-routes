@@ -1,16 +1,7 @@
 package nl.utwente.bigdata;
 
-import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.SparkContext._
 import org.apache.spark.{ SparkContext, SparkConf }
-import org.apache.spark.mllib.clustering.{ LDA, DistributedLDAModel }
-import org.apache.spark.mllib.linalg.Vectors
-import tl.lin.data.map.HMapIIW
-import org.apache.hadoop.io.IntWritable
-import org.apache.spark.mllib.linalg.SparseVector
-import org.apache.spark.mllib.linalg.Vector
-import scala.collection.JavaConversions._
-import scala.collection.mutable.WrappedArray
 
 object ScalaWordCount {
 
