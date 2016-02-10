@@ -15,12 +15,11 @@ export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export USER=$(whoami)
 export SPARK_DIR=/usr/lib/spark/bin
-
 # run tool with yarn-resource manager choosing a worker as the driver
 function runTool() {
         name=$1
         shift
-        spark-submit --class ${CLASS_PREFIX}$name \
+        $SPARK_DIR/spark-submit --class ${CLASS_PREFIX}$name \
             --name $name
             --master yarn-cluster \
             --num-executors $EXECUTORS \
@@ -35,7 +34,7 @@ function runTool() {
 function runToolClient() {
         name=$1
         shift
-        $SPARK_DIR//spark-submit --class ${CLASS_PREFIX}$name \
+        $SPARK_DIR/spark-submit --class ${CLASS_PREFIX}$name \
             --master yarn-client \
             --num-executors $EXECUTORS \
             --driver-memory $DRIVER_MEM \
@@ -47,7 +46,7 @@ function runToolClient() {
 }
 # create a shell
 function runShell() {
-        $SPARK_DIR//spark-shell \
+        $SPARK_DIR/spark-shell \
             --master yarn-client \
             --num-executors $EXECUTORS \
             --driver-memory $DRIVER_MEM \
