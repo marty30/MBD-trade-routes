@@ -20,7 +20,7 @@ function runTool() {
         name=$1
         shift
         $SPARK_DIR/spark-submit --class ${CLASS_PREFIX}$name \
-            --name $name
+            --name $name \
             --master yarn-cluster \
             --num-executors $EXECUTORS \
             --driver-memory $DRIVER_MEM \
