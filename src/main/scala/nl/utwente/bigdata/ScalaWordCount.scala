@@ -14,11 +14,11 @@ object ScalaWordCount {
     // spark context
     val sc = new SparkContext(conf)
 
-    val textFile = sc.textFile(args(1))
+    val textFile = sc.textFile(args(0))
     val counts = textFile.flatMap(line => line.split(" "))
       .map(word => (word, 1))
       .reduceByKey(_ + _)
-    counts.saveAsTextFile(args(2))
+    counts.saveAsTextFile(args(1))
 
   }
 }
