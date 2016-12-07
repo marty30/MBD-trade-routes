@@ -44,7 +44,7 @@ function runToolRemote() {
   shift
   CLASS=${CLASS_PREFIX}$TOOL  
   JAR = $(echo target/*-with-dependencies.jar)
-  JARBASE = $(basename $jar)
+  JARBASE = $(basename $JAR)
   mvn package && \
     scp $JAR $USER@ctithead1.ewi.utwente.nl:~/$JARBASE && \
     ssh $USER@ctithead1.ewi.utwente.nl yarn jar \~/$JARBASE $CLASS $@
