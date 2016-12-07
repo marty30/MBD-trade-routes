@@ -5,8 +5,8 @@ export CLASS_PREFIX=nl.utwente.bigdata.
 export PROJECT_HOME=$PWD
 export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
 export HADOOP_CONF_DIR=/etc/hadoop/conf
-export USER=$(whoami)
-export SPARK_DIR=/usr/lib/spark/bin
+export USER=${USER:-$(whoami)}
+export SPARK_HOME={SPARK_HOME:-/usr/local/spark/bin}
 # run tool with yarn-resource manager choosing a worker as the driver
 function runTool() {
         name=$1
@@ -37,4 +37,15 @@ function runShell() {
             --conf spark.ui.port=4050 \
             --queue ${USER} \
             $@ 
+}
+# run remotely
+function runToolRemote() {
+  TOOL=$1
+  shift
+  CLASS=${CLASS_PREFIX}$TOOL  
+  JAR = $(echo target/*-with-dependencies.jar)
+  JARBASE = $(basename $jar)
+  mvn package && \
+    scp $JAR $USER@ctithead1.ewi.utwente.nl:~/$JARBASE && \
+    ssh $USER@ctithead1.ewi.utwente.nl yarn jar \~/$JARBASE $CLASS $@
 }
