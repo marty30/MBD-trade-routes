@@ -46,6 +46,6 @@ function runToolRemote() {
   JAR=$(echo target/*-with-dependencies.jar)
   JARBASE=$(basename $JAR)
   mvn package && \
-    scp $JAR $USER@ctithead1.ewi.utwente.nl:~/$JARBASE && \
-    ssh $USER@ctithead1.ewi.utwente.nl yarn jar \~/$JARBASE $CLASS $@
+    rsync -avug $JAR $USER@ctithead1.ewi.utwente.nl:~/$JARBASE && \
+    ssh $USER@ctithead1.ewi.utwente.nl spark-submit --class $CLASS --master yarn-cluster -queue $USER \~/$JARBASE $@
 }
