@@ -6,19 +6,19 @@ export PROJECT_HOME=$PWD
 export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export USER=${USER:-$(whoami)}
-export SPARK_HOME={SPARK_HOME:-/usr/local/spark/bin}
+export SPARK_HOME=${SPARK_HOME:-/usr/lib/spark}
 # run tool with yarn-resource manager choosing a worker as the driver
 function runTool() {
         name=$1
         shift
-        export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
+        set -x
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --name $name \
             --master yarn-cluster \
-            --jars $LIBJARS \
             --queue $USER \
-            target/ctit-spark*.jar \
+            target/ctit-spark*-with-dependencies.jar \
             $@
+        set +x
 }
 # run tool with the local machine being the driver program.
 function runToolClient() {
@@ -27,7 +27,7 @@ function runToolClient() {
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --master yarn-client \
             --queue $USER \
-            target/ctit-spark*.jar \
+            target/ctit-spark*-with-dependencies.jar \
             $@
 }
 # create a shell
