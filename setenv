@@ -47,5 +47,5 @@ function runToolRemote() {
   JARBASE=$(basename $JAR)
   mvn package && \
     rsync -avug $JAR $USER@ctithead1.ewi.utwente.nl:~/$JARBASE && \
-    ssh $USER@ctithead1.ewi.utwente.nl /usr/lib/spark/bin/spark-submit --class $CLASS --master yarn-cluster -queue $USER \~/$JARBASE $@
+    ssh $USER@ctithead1.ewi.utwente.nl /usr/lib/spark/bin/spark-submit --class $CLASS --master yarn-cluster --queue $USER \~/$JARBASE $@
 }
