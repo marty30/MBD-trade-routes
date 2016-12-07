@@ -12,7 +12,7 @@ function runTool() {
         name=$1
         shift
         export LIBJARS=$(echo $PROJECT_HOME/target/lib/*.jar | tr ' ' ',')
-        $SPARK_DIR/spark-submit --class ${CLASS_PREFIX}$name \
+        $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --name $name \
             --master yarn-cluster \
             --jars $LIBJARS \
@@ -24,7 +24,7 @@ function runTool() {
 function runToolClient() {
         name=$1
         shift
-        $SPARK_DIR/spark-submit --class ${CLASS_PREFIX}$name \
+        $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --master yarn-client \
             --queue $USER \
             target/ctit-spark*.jar \
@@ -32,7 +32,7 @@ function runToolClient() {
 }
 # create a shell
 function runShell() {
-        $SPARK_DIR/spark-shell \
+        $SPARK_HOME/bin/spark-shell \
             --master yarn-client \
             --conf spark.ui.port=4050 \
             --queue ${USER} \

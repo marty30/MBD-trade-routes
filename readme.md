@@ -13,6 +13,13 @@ mvn package
 ## Prepare for running jobs
 
 For each session, you first have to load the environment file `setenv`:
+
+Set the environment variables
+```
+export USER=xyz
+export SPARK_HOME=/usr/local/spark-cluster
+```
+
 ```
 . setenv
 ````
