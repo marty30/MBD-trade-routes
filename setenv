@@ -15,8 +15,9 @@ function runTool() {
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --name $name \
             --master yarn-cluster \
+            --driver-memory 6g \
             --queue $USER \
-            target/ctit-spark*-with-dependencies.jar \
+            target/ctit-spark*.jar \
             $@
         set +x
 }
@@ -27,7 +28,7 @@ function runToolClient() {
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --master yarn-client \
             --queue $USER \
-            target/ctit-spark*-with-dependencies.jar \
+            target/ctit-spark*.jar \
             $@
 }
 # create a shell
