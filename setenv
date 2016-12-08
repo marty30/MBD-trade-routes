@@ -15,7 +15,6 @@ function runTool() {
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
             --name $name \
             --master yarn-cluster \
-            --driver-memory 6g \
             --queue $USER \
             target/ctit-spark*.jar \
             $@

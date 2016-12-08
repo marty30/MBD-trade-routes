@@ -29,6 +29,7 @@
          </executions>
         <configuration>
           <sourceDir>src/main/scala</sourceDir>
+          <testDir>src/test/scala</testDir>
         </configuration>
       </plugin>
     </plugins>
@@ -39,6 +40,28 @@
       <artifactId>spark-core_2.10</artifactId>
       <version>1.6.0</version>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.twitter</groupId>
+          <artifactId>chill_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.typesafe.akka</groupId>
+          <artifactId>akka-remote_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.typesafe.akka</groupId>
+          <artifactId>akka-slf4j_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.json4s</groupId>
+          <artifactId>json4s-jackson_2.10</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.module</groupId>
+          <artifactId>jackson-module-scala_2.10</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
