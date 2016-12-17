@@ -5,7 +5,7 @@ import org.apache.spark.{ SparkContext, SparkConf }
 // uncomment if your program uses sql
 //import org.apache.spark.sql.{ SQLContext }
 
-object Template {
+object $toolName {
 
   def main(args: Array[String]) {
     // command line arguments

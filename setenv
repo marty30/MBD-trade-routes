@@ -13,13 +13,26 @@ function runTool() {
         shift
         set -x
         $SPARK_HOME/bin/spark-submit --class ${CLASS_PREFIX}$name \
-            --name $name \
             --master yarn-cluster \
             --queue $USER \
             target/ctit-spark*.jar \
             $@
         set +x
 }
+# run a python tool
+function runPythonTool() {
+        name=$1
+        shift
+        set -x
+        $SPARK_HOME/bin/spark-submit  \
+            --master yarn-cluster \
+            --queue $USER \
+            --jars target/ctit-spark*.jar \
+            src/main/python/${name}.py \
+            $@ 
+        set +x
+}
+
 # run tool with the local machine being the driver program.
 function runToolClient() {
         name=$1
