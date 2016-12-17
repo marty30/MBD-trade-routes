@@ -4,6 +4,10 @@ import os
 import json
 import pyspark
 
+# add actual job
+def doJob(rdd):
+  return rdd
+
 def main():
   # parse arguments 
   in_dir, out_dir = sys.argv[1:]
@@ -11,7 +15,8 @@ def main():
   conf = pyspark.SparkConnf().setAppName("$toolName %s %s" % (in_dir, out_dir))
   sc = pyspark.SparkContext(conf=conf)
   
-  # add actual program using sc
+  # invoke job and put into output directory
+  doJob(sc.textFile(in_dir)).saveAsTextFile(out_dir)
 
 
 if __name__ == '__main__':

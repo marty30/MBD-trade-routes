@@ -35,7 +35,7 @@ can be applied for both:
 
 * Check out the source code template directory: ``git clone https://github.com/robinaly/ctit-spark.git <projectname>``.
 * Change into that directory: ``cd <projectname>``
-* Create a new task: ``./createTool.sh <TaskName>``
+* Create a new task: ``./createTool.sh [python|java|scala] <ToolName>``
 * Edit the source file in an editor
 * If you are onn your local computer, you can upload the source code to the head node, by:
  * ``rsync -avug ./ <username>@ctithead1.ewi.utwente.nl:~/<projectname>/``

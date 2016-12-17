@@ -32,6 +32,25 @@
           <testDir>src/test/scala</testDir>
         </configuration>
       </plugin>
+      <!-- enable scalatest -->
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest-maven-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -40,7 +59,9 @@
       <artifactId>spark-core_2.10</artifactId>
       <version>1.6.0</version>
       <scope>provided</scope>
-      <exclusions>
+      <!-- uncomment the below to get rid of the errors concerning multiple scala versions.
+      However, this causes errors with testing. --> 
+      <!-- <exclusions>
         <exclusion>
           <groupId>com.twitter</groupId>
           <artifactId>chill_2.10</artifactId>
@@ -61,13 +82,32 @@
           <groupId>com.fasterxml.jackson.module</groupId>
           <artifactId>jackson-module-scala_2.10</artifactId>
         </exclusion>
-      </exclusions>
+      </exclusions> -->
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-sql_2.10</artifactId>
       <version>1.6.0</version>
       <scope>provided</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest_2.11 -->
+    <dependency>
+        <groupId>org.scalatest</groupId>
+        <artifactId>scalatest_2.10</artifactId>
+        <version>3.0.0</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.holdenkarau</groupId>
+        <artifactId>spark-testing-base_2.10</artifactId>
+        <version>1.6.0_0.3.3</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.spark</groupId>
+        <artifactId>spark-hive_2.10</artifactId>
+        <version>1.6.0</version>
+        <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

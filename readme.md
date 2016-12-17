@@ -1,55 +1,59 @@
 # Template Spark Project for the CTIT Cluster
 
-This template contains some settings and examples in Java and Scala.
+This template contains some settings and examples in Python, Java, and Scala.
 
-## Setup
-To run commands in the background (/usr/lib/spark/bin/spark) or in a shell (/usr/lib/spark/bin/spark-shell), you have to call supply several parameters. The file `setenv` stores these parameters. Please adapt this file before you continue.
+## Creating a new Job
 
-To compile the project do the following
-```
-mvn package
-```
+To create a new job, use the provide ``createTool.sh``, which is a script that create an empty job 
+from a suitable template located in the folder ``templates``. The script is called as follows:
 
-## Prepare for running jobs
+    ./createTool.sh <language> <toolname>
 
-For each session, you first have to load the environment file `setenv`:
+, where
 
-Set the environment variables
-```
-export USER=xyz
-export SPARK_HOME=/usr/local/spark-cluster
-```
+* <langauge> is scala, java or python, and
+* <toolname> is the name of the tool (by convention starting with an upper case).
+  
+## Compilation
 
-```
-. setenv
-````
+If you have Java or Scala jobs, you can compile them with the command as follows
 
-## Running a background job
-You can now run a background job by using the command `runTool`. For example, to run the included `JavaWordCount` example, use:
-```
-runTool JavaWordCount input output
-```
-where input and output the source and target directories.
+    mvn package
+    
+## Testing
 
-Alternatively, you can also run the equivalent job in Scala:
-```
-runTool ScalaWordCount input output
-```
+Before you run a job on the cluster, please test the code locally. To do this, 
+you have to define so-called test cases. All tests assume that you have the environment variable SPARK_HOME 
+pointing to the top directory of your spark installation, which can be downloaded [here](http://spark.apache.org/downloads.html). 
 
-## Running an interactive shell
-You can also run an interactive shell, for this you type:
-```
-runShell
-```
-There will be some status messages and then you arrive at a prompt where you can insert scala commands interactively, for example:
-```
-val text = sc.textFile("input")
-val map  = text.flatMap(line => line.split(" ")).map(word => (word,1))
-val reduce = map.reduceByKey((a,b) => a + b)
-reduce.saveAsTextFile("output")
-```
 
-If you want to process an existing script, you can also do:
-```
-cat script | runShell
-```
+### Scala
+
+If you created a tool with ``createTool.sh``, your test cases should be stored in the file
+``src/test/scala/nl/utwente/bigdat/<ToolName>Test.scala``. In the file there is a commented-out
+test case.
+
+### Python
+
+Test cases for python jobs are stored in the same directory as the
+job itself: ``src/main/python``.  The tests require the package
+``pytest``, which can be installed with the command 
+
+    pip install pytest
+
+. To execute the tests, you first have to include the python
+adaptor for spark and the library py4j into your python path:
+
+    export PYTHONPATH=$PYTHONPATH:$SPARK_HOME/python/:$SPARK_HOME/python/lib/py4j-*-src.zip
+    
+And to actually execute the tests:
+
+    py.test -m spark_local src/main/python/*Test.py
+
+## Access to the cluster
+
+The documentation of how to access the cluster can be found [here](access.md).
+
+## Datasets
+
+The documentation of available datasets on the cluster can be found [here](data.md).
