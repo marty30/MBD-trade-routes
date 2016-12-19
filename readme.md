@@ -4,10 +4,10 @@ This template contains some settings and examples in Python, Java, and Scala.
 
 ## Creating a new Job
 
-To create a new job, use the provide ``createTool.sh``, which is a script that create an empty job 
+To create a new job, use the provided ``createTool.sh``, which is a script that create an empty job 
 from a suitable template located in the folder ``templates``. The script is called as follows:
 
-    ./createTool.sh <language> <toolname>
+    python ./createTool.sh <language> <toolname>
 
 , where
 
@@ -57,3 +57,11 @@ The documentation of how to access the cluster can be found [here](access.md).
 ## Datasets
 
 The documentation of available datasets on the cluster can be found [here](data.md).
+
+## Creating html versions of the documentation
+
+To create a self-contained html version of the documentation use the following commands (requires pandocs)
+
+    pandoc -T "Cluster Access" --toc -f markdown_github access.md -N -t html -o access.html
+    encodeImages.py access.html
+
