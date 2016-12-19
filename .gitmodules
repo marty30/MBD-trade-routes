@@ -1,0 +1,3 @@
+[submodule "data"]
+	path = data
+	url = ssh://alyr@ctithead1.ewi.utwente.nl/home/alyr/git/ctit-data.git
