@@ -2,25 +2,16 @@ import PythonWordCount
 import pytest
 import pyspark
 
-@pytest.fixture(scope="session",
-                params=[pytest.mark.spark_local('local'),
-                        pytest.mark.spark_yarn('yarn')])
+# create necessary test framework
+@pytest.fixture(scope="session")
 def spark_context(request):
-    if request.param == 'local':
-        conf = (pyspark.SparkConf()
-                .setMaster("local[2]")
-                .setAppName("pytest-pyspark-local-testing")
-                )
-    elif request.param == 'yarn':
-        conf = (pyspark.SparkConf()
-                .setMaster("yarn-client")
-                .setAppName("pytest-pyspark-yarn-testing")
-                .set("spark.executor.memory", "1g")
-                .set("spark.executor.instances", 2)
-                )
-    request.addfinalizer(lambda: sc.stop())
-
+    conf = (pyspark.SparkConf()
+            .setMaster("local[2]")
+            .setAppName("pytest-pyspark-local-testing")
+            )
     sc = pyspark.SparkContext(conf=conf)
+    request.addfinalizer(lambda: sc.stop())
+    
     return sc
 
 def test_that_requires_sc(spark_context):

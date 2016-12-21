@@ -48,7 +48,7 @@ adaptor for spark and the library py4j into your python path:
     
 And to actually execute the tests:
 
-    py.test -m spark_local src/main/python/*Test.py
+    py.test src/main/python/<ToolName>Test.py
 
 ## Access to the cluster
 
