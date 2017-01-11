@@ -22,12 +22,19 @@ object ScalaWordCount {
    in a set of textfiles
    */
   def main(args: Array[String]) {
-    // configuration
-    val conf = new SparkConf().setAppName(s"TestLDA")
+    // command line arguments
+    val appName = this.getClass.getName
 
+    // interpret command line, default: first argument is input second is output
+    val inputDir = args(0)
+    val outputDir = args(1)
+
+    // configuration
+    val conf = new SparkConf()
+      .setAppName(s"$appName $inputDir $outputDir")
     // spark context
     val sc = new SparkContext(conf)
 
-    count(sc.textFile(args(0))).saveAsTextFile(args(1))
+    count(sc.textFile(inputDir)).saveAsTextFile(outputDir)
   }
 }
