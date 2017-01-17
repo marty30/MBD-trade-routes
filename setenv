@@ -27,6 +27,8 @@ function runPythonTool() {
         $SPARK_HOME/bin/spark-submit  \
             --master yarn-cluster \
             --queue $USER \
+            --executor-memory 3G \
+            --conf spark.yarn.executor.memoryOverhead=2048 \
             --jars target/ctit-spark*.jar \
             src/main/python/${name}.py \
             $@ 
