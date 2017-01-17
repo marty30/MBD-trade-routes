@@ -44,7 +44,6 @@ def doJob(full_data, sql):
 
   # Join static and dynamic data
   joined_data = sql.sql("SELECT d.mmsi, d.ts, date, lat, lat2, lon, lon2, cog, d.type as dynamic_type, s.type as static_type, heading, shipname, destination, dimstarboard, dimport, dimstern, dimbow, draught, shiptype, callsign, imo, eta_minute_avg, eta_hour_avg, eta_day_avg, eta_month_avg FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) ORDER BY d.mmsi,d.ts")
-  joined_data.registerTempTable("joined")
   #joined_data.show()
   return joined_data
 
