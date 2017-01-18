@@ -31,7 +31,7 @@ def doJob(full_data, sql):
   #sql.sql("SELECT * FROM unique_static_data ORDER BY count DESC").show()
 
   # Check if it is truely unique
-  sql.sql("SELECT COUNT(*) as cnt, first(shipname) as shipname, first(mmsi) as mmsi FROM unique_static_data GROUP BY mmsi HAVING COUNT(*)>1").show()
+  # sql.sql("SELECT COUNT(*) as cnt, first(shipname) as shipname, first(mmsi) as mmsi FROM unique_static_data GROUP BY mmsi HAVING COUNT(*)>1").show()
 
   # Fails:
   # - Names that are not exactly the same
@@ -43,9 +43,11 @@ def doJob(full_data, sql):
   # 
 
   # Join static and dynamic data
-  joined_data = sql.sql("SELECT d.mmsi, d.ts, date, lat, lat2, lon, lon2, cog, d.type as dynamic_type, s.type as static_type, heading, shipname, destination, dimstarboard, dimport, dimstern, dimbow, draught, shiptype, callsign, imo, eta_minute_avg, eta_hour_avg, eta_day_avg, eta_month_avg FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) ORDER BY d.mmsi,d.ts")
+  joined_data = sql.sql("SELECT COUNT(d.mmsi) AS count, avg(lat) AS lat, avg(lon) AS lon, sum((dimstarboard + dimport) * (dimstern + dimbow)) AS load, max(destination) AS destination FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) GROUP BY ROUND(lat, 2), ROUND(lon, 2)")
   joined_data.registerTempTable("joined")
-  #joined_data.show()
+  sql.sql("SELECT min(from_unixtime(ts)), max(from_unixtime(ts)) FROM dynamic_data").show()
+  sql.sql("SELECT max(load) FROM dynamic_data").show()
+  sql.sql("SELECT destination AS destination, sum(load) AS loadSum FROM joined GROUP BY destination").write.json(sys.argv[2]+'/destination_load/')
   return joined_data # Should return an agregated result with the following attributes: ts, lat, lon, load, dest
 
 def main():
