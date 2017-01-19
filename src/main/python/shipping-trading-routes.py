@@ -43,12 +43,12 @@ def doJob(full_data, sql):
   # 
 
   # Join static and dynamic data
-  joined_data = sql.sql("SELECT COUNT(d.mmsi) AS count, avg(lat) AS lat, avg(lon) AS lon, sum((dimstarboard + dimport) * (dimstern + dimbow)) AS load, max(destination) AS destination FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) GROUP BY ROUND(lat, 2), ROUND(lon, 2)")
+  joined_data = sql.sql("SELECT COUNT(d.mmsi) AS count, avg(lat) AS lat, avg(lon) AS lon, sum((dimstarboard + dimport) * (dimstern + dimbow)*draught*9800) AS load, max(destination) AS destination FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) GROUP BY ROUND(lat, 0), ROUND(lon, 0)")
   joined_data.registerTempTable("joined")
-  sql.sql("SELECT min(from_unixtime(ts)), max(from_unixtime(ts)) FROM dynamic_data").show()
-  sql.sql("SELECT max(load) FROM joined").show()
-  sql.sql("SELECT destination AS destination, sum(load) AS loadSum FROM joined GROUP BY destination").write.json(sys.argv[2]+'/destination_load/')
-  return joined_data # Should return an agregated result with the following attributes: ts, lat, lon, load, dest
+  #sql.sql("SELECT min(from_unixtime(ts)), max(from_unixtime(ts)) FROM dynamic_data").show()
+  #sql.sql("SELECT max(load) AS maxload FROM joined").show()
+  dest = sql.sql("SELECT destination AS destination, sum(load) AS loadSum FROM joined GROUP BY destination")
+  return dest # Should return an agregated result with the following attributes: ts, lat, lon, load, dest
 
 def main():
   # parse arguments 
