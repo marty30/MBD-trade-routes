@@ -7,7 +7,7 @@ import time
 from pyspark.sql.functions import udf
 
 # add actual job
-def doJob(full_data, sql):
+def doJob(full_data, sql, FIND_DESTINATIONS_WITH_LOADS=False):
   epochToDate = udf(lambda epoch: time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(epoch)))
   #print (rdd.take(1))
   #full_data = rdd.map(lambda x: (x, )).toDF()
@@ -19,14 +19,15 @@ def doJob(full_data, sql):
   # shipname, eta_hour, dimstarboard, draught, dimstern, mmsi, destination, dimport, ts, imo, eta_day, eta_minute, shiptype, callsign, eta_month, dimbow, type
   static_data = sql.sql("SELECT shipname, eta_hour, dimstarboard, draught, dimstern, mmsi, destination, dimport, ts, date, imo, eta_day, eta_minute, shiptype, callsign, eta_month, dimbow, type FROM full_data WHERE shiptype >= 70 AND shiptype <= 89 ORDER BY mmsi DESC")
   static_data.registerTempTable("static_data")
-  
-  # Get dynamic data:
-  #sog, ts, timestamp, mmsi, lat, lat2, lon, lon2, rot_direction, rot_angle, nav_status, cog, type, heading
-  dynamic_data = sql.sql("SELECT sog, ts, date, timestamp, mmsi, lat, lat2, lon, lon2, rot_direction, rot_angle, nav_status, cog, type, heading FROM full_data WHERE lat IS NOT NULL")
-  dynamic_data.registerTempTable("dynamic_data")
+
+  if (not FIND_DESTINATIONS_WITH_LOADS):
+      # Get dynamic data:
+      #sog, ts, timestamp, mmsi, lat, lat2, lon, lon2, rot_direction, rot_angle, nav_status, cog, type, heading
+      dynamic_data = sql.sql("SELECT ts, date, mmsi, lat, lat2, lon, lon2 FROM full_data WHERE lat IS NOT NULL")
+      dynamic_data.registerTempTable("dynamic_data")
 
   # Make static data unique
-  unique_static_data = sql.sql("SELECT count(*) as count, shipname, max(dimstarboard) as dimstarboard, max(dimport) as dimport, max(dimstern) as dimstern, max(dimbow) as dimbow, draught, mmsi, destination, imo, avg(eta_minute) as eta_minute_avg, avg(eta_hour) as eta_hour_avg, avg(eta_day) as eta_day_avg, avg(eta_month) as eta_month_avg, shiptype, callsign, type FROM static_data GROUP BY shipname, draught, mmsi, destination, imo, shiptype, callsign, type ORDER BY mmsi DESC")
+  unique_static_data = sql.sql("SELECT count(*) as count, shipname, mmsi, destination, sum((max(dimstarboard) + max(dimport)) * (max(dimstern) + max(dimbow))*draught*9800) AS load FROM static_data GROUP BY shipname, draught, mmsi, destination, imo, shiptype, callsign, type")
   unique_static_data.registerTempTable("unique_static_data")
   #sql.sql("SELECT * FROM unique_static_data ORDER BY count DESC").show()
 
@@ -42,24 +43,28 @@ def doJob(full_data, sql):
   # - Different draughts
   # 
 
-  # Join static and dynamic data
-  joined_data = sql.sql("SELECT COUNT(d.mmsi) AS count, avg(lat) AS lat, avg(lon) AS lon, sum((dimstarboard + dimport) * (dimstern + dimbow)*draught*9800) AS load, max(destination) AS destination FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) GROUP BY ROUND(lat, 0), ROUND(lon, 0)")
-  joined_data.registerTempTable("joined")
-  #sql.sql("SELECT min(from_unixtime(ts)), max(from_unixtime(ts)) FROM dynamic_data").show()
-  #sql.sql("SELECT max(load) AS maxload FROM joined").show()
-  dest = sql.sql("SELECT destination AS destination, sum(load) AS loadSum FROM joined GROUP BY destination")
-  return dest # Should return an agregated result with the following attributes: ts, lat, lon, load, dest
+  if (not FIND_DESTINATIONS_WITH_LOADS):
+    # Join static and dynamic data
+    joined_data = sql.sql("SELECT count(d.mmsi) as count, ts, avg(lat) AS lat, avg(lon) AS lon, sum(load) FROM dynamic_data as d INNER JOIN unique_static_data as s ON (d.mmsi=s.mmsi) GROUP BY ROUND(lat, 0), ROUND(lon, 0)")
+    #joined_data.registerTempTable("joined")
+    sql.sql("SELECT min(from_unixtime(ts)), max(from_unixtime(ts)) FROM dynamic_data").show()
+    sql.sql("SELECT max(load) AS maxload FROM joined").show()
+    return joined_data # Should return an agregated result with the following attributes: count, ts, lat, lon, load
+  else:
+    dest = sql.sql("SELECT destination AS destination, sum(load) AS loadSum FROM unique_static_data GROUP BY destination")
+    return dest
 
 def main():
   # parse arguments 
   in_dir, out_dir = sys.argv[1:]
+  FIND_DESTINATIONS_WITH_LOADS = True
   
   conf = pyspark.SparkConf().setAppName("%s %s %s" % (os.path.basename(__file__), in_dir, out_dir))
   sc = pyspark.SparkContext(conf=conf)
   sql = pyspark.SQLContext(sc)
   
   # invoke job and put into output directory
-  doJob(sql.read.json(in_dir), sql).write.json(out_dir)
+  doJob(sql.read.json(in_dir), sql, FIND_DESTINATIONS_WITH_LOADS).write.json(out_dir)
   #doJob(sc.textFile(in_dir)).saveAsTextFile(out_dir)
 
 if __name__ == '__main__':
