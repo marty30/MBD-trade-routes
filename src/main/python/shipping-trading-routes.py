@@ -17,7 +17,7 @@ def doJob(full_data, sql, FIND_DESTINATIONS_WITH_LOADS=False):
   
   # Get static data:
   # shipname, eta_hour, dimstarboard, draught, dimstern, mmsi, destination, dimport, ts, imo, eta_day, eta_minute, shiptype, callsign, eta_month, dimbow, type
-  static_data = sql.sql("SELECT shipname, eta_hour, dimstarboard, draught, dimstern, mmsi, destination, dimport, ts, date, imo, eta_day, eta_minute, shiptype, callsign, eta_month, dimbow, type FROM full_data WHERE shiptype >= 70 AND shiptype <= 89 ORDER BY mmsi DESC")
+  static_data = sql.sql("SELECT shipname, ((dimstarboard + dimport) * (dimstern + dimbow)*draught*9800) AS load, mmsi, destination, ts, date, imo, shiptype, callsign, type FROM full_data WHERE shiptype >= 70 AND shiptype <= 89 ORDER BY mmsi DESC")
   static_data.registerTempTable("static_data")
 
   if (not FIND_DESTINATIONS_WITH_LOADS):
@@ -27,7 +27,7 @@ def doJob(full_data, sql, FIND_DESTINATIONS_WITH_LOADS=False):
       dynamic_data.registerTempTable("dynamic_data")
 
   # Make static data unique
-  unique_static_data = sql.sql("SELECT count(*) as count, shipname, mmsi, destination, sum((max(dimstarboard) + max(dimport)) * (max(dimstern) + max(dimbow))*draught*9800) AS load FROM static_data GROUP BY shipname, draught, mmsi, destination, imo, shiptype, callsign, type")
+  unique_static_data = sql.sql("SELECT count(*) as count, shipname, mmsi, destination, sum(load) AS load FROM static_data GROUP BY shipname, draught, mmsi, destination, imo, shiptype, callsign, type")
   unique_static_data.registerTempTable("unique_static_data")
   #sql.sql("SELECT * FROM unique_static_data ORDER BY count DESC").show()
 
