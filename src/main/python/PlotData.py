@@ -3,7 +3,7 @@ import json
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 
-INPUT="data.json"
+INPUT="sample.json"
 OUTPUT='plots/trade-routes-'+str(int(time.time()))+'.png'
 
 # See: https://peak5390.wordpress.com/2012/12/08/matplotlib-basemap-tutorial-plotting-points-on-a-simple-map/
@@ -13,7 +13,7 @@ TOP_RIGHT_LAT = 70  # 57.75 # N (If it is negative, it is S)
 TOP_RIGHT_LON = 179  # E (If it is negative, it is W)
 BOTTOM_LEFT_LAT = -70  # N (If it is negative, it is S)
 BOTTOM_LEFT_LON = -179  # E (If it is negative, it is W)
-MAX_SHIP_LOAD = -1 # if this is -1, it will be calculated
+MAX_SHIP_LOAD = 598301 # if this is -1, it will be calculated
 
 NUMBER_OF_DEGREES_IN_IMAGE = (TOP_RIGHT_LAT - BOTTOM_LEFT_LAT) * (TOP_RIGHT_LON - BOTTOM_LEFT_LON)
 MAX_SHIP_SIZE = 20
@@ -23,8 +23,8 @@ print "NUMBER_OF_DEGREES_IN_IMAGE: ", NUMBER_OF_DEGREES_IN_IMAGE
 # print "Find middle point of the map"
 print "build Basemap...",
 map = Basemap(projection='merc',
-              lat_0=TOP_RIGHT_LAT,
-              lon_0=TOP_RIGHT_LON,
+              #lat_0=TOP_RIGHT_LAT,
+              #lon_0=TOP_RIGHT_LON,
               resolution='h',
               area_thresh=10,
               llcrnrlon=BOTTOM_LEFT_LON,
@@ -53,17 +53,17 @@ if MAX_SHIP_SIZE == -1:
         if dataentry["load"] > MAX_SHIP_LOAD:
             MAX_SHIP_LOAD = dataentry["load"]
 
-
+print "MAX LOAD: ", MAX_SHIP_LOAD
 def getMarkerSizeFromLoad(load):
     return int(float(load)/MAX_SHIP_LOAD*MAX_SHIP_SIZE)
 
 
 for dataentry in data:
-    msize = getMarkerSizeFromLoad(dataentry["load"])
-    x, y = map(dataentry["lat"], dataentry["lon"])
+    msize = getMarkerSizeFromLoad(dataentry["load"])+3
+    x, y = map(dataentry["lon"], dataentry["lat"])
+    print "plot (",dataentry["lat"], dataentry["lon"],") ->", msize
     map.plot(x, y, 'bo', markersize=msize)
 
 print "Save the map to", OUTPUT,"...",
-plt.savefig(OUTPUT, bbox_inches='tight', dpi=500)
+plt.savefig(OUTPUT, bbox_inches='tight', dpi=100)
 print "done"
-
