@@ -32,7 +32,7 @@ if __name__ == "__main__":
     for latitude in data.keys():
         for longitude in data[latitude].keys():
             elem = data[latitude][longitude]
-            jsonlist.append({'longitude':latitude,'latitude':longitude,'count': elem[0],'load': elem[1]})
+            jsonlist.append({'longitude':latitude-300,'latitude':longitude-300,'count': elem[0],'load': elem[1]})
     with open('result.json','w') as out:
         json.dump(jsonlist, out)
 
