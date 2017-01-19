@@ -17,7 +17,7 @@ def doJob(full_data, sql, FIND_DESTINATIONS_WITH_LOADS=False):
   
   # Get static data:
   # shipname, eta_hour, dimstarboard, draught, dimstern, mmsi, destination, dimport, ts, imo, eta_day, eta_minute, shiptype, callsign, eta_month, dimbow, type
-  static_data = sql.sql("SELECT shipname, ((dimstarboard + dimport) * (dimstern + dimbow)*draught*9800) AS load, mmsi, destination, ts, date, imo, shiptype, callsign, type FROM full_data WHERE shiptype >= 70 AND shiptype <= 89 ORDER BY mmsi DESC")
+  static_data = sql.sql("SELECT shipname, ((dimstarboard + dimport) * (dimstern + dimbow)*draught*9800) AS load, draught, mmsi, destination, ts, date, imo, shiptype, callsign, type FROM full_data WHERE shiptype >= 70 AND shiptype <= 89 ORDER BY mmsi DESC")
   static_data.registerTempTable("static_data")
 
   if (not FIND_DESTINATIONS_WITH_LOADS):

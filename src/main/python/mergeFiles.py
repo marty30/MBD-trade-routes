@@ -3,7 +3,7 @@ from os import listdir
 
 from os.path import isfile, join
 
-IN="final-416-run"
+IN="data/runDests416"
 OUT=IN+".json"
 filenames = [join(IN, f) for f in listdir(IN) if isfile(join(IN, f))]
 with open(OUT, 'w+') as outfile:
